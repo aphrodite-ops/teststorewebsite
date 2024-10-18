@@ -21,6 +21,6 @@ function loop() {
     localStorage.setItem("superList",super_list_serialized);
     let super_list_deserialized=JSON.parse(localStorage.getItem("superList"));
     console.log(localStorage.getItem("superList"));
-    
+    console.log("balls")
 };
 setInterval(loop,1);
