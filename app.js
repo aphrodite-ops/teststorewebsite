@@ -19,8 +19,8 @@ function loop() {
     //}
     let super_list_serialized=JSON.stringify(super_list);
     localStorage.setItem("superList",super_list_serialized);
-    let super_list_deserialized=JSON.parse(localStorage.getItem("superList"))
-    console.log(localStorage.getItem("superList"))
+    let super_list_deserialized=JSON.parse(localStorage.getItem("superList"));
+    console.log(localStorage.getItem("superList"));
     
 };
 setInterval(loop,1);
