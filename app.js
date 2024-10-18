@@ -14,8 +14,7 @@ window.addEventListener("mousemove",function get_mouse_pos(ev) {
 function loop() {
     let super_list_serialized=JSON.stringify(super_list);
     localStorage.setItem("superList",super_list_serialized);
-    let super_list_deserialized=JSON.parse(localStorage.getItem("superList"))
-    super_list[1]='';
-    
+    let super_list_deserialized=JSON.parse(localStorage.getItem("superList"));
+    console.log(localStorage.getItem("superList"))
 };
 setInterval(loop,1);
