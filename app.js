@@ -9,8 +9,10 @@ var is_pressed = false //this will store wether or not the mouse is pressed
 let mouse_pos; //this will temporarily store the moust position
 let art = [] //stores all the mouse positions in your current stroke
 let ctrl = false //is ctrl pressed
-let line_width = 2 //stroke width
+let line_width = 2 //pen size
 let keys = null //key currently pressed
+let bg_col='white' //background color
+let pen_col='black' //pen color
 
 localStorage.setItem("time",0) //sets time to 0
 
@@ -29,11 +31,9 @@ window.addEventListener("mouseup", function get_mouse_up(ev) { //set is_pressed 
 })
 
 //get key pressed
-window.addEventListener("keydown", function is_ctrl(ev) {
-    ctrl=ev.ctrlKey
-})
 window.addEventListener("keydown",function get_keys(ev) {
     keys=ev.key
+    ctrl=ev.ctrlKey
 })
 window.addEventListener("keyup", function undo_keys(ev) {
     if (ev.key==keys) {
@@ -57,11 +57,11 @@ function loop() { //main loop
 
             if (keys==ERASE_KEY) {
                 ctx.lineWidth=20;
-                ctx.strokeStyle='white';
+                ctx.strokeStyle=bg_col;
             }
             else {
                 ctx.lineWidth=line_width;
-                ctx.strokeStyle='black';
+                ctx.strokeStyle=pen_col;
             }
 
             var secend_newest_mouse_pos=art[art.length-2]; //start point of the line
