@@ -1,0 +1,2 @@
+The way it draws is by checking when you move your mouse, and when you do, it draws a line from the previous position of your mouse to the current position of the mouse.
+These lines are also very small. If you do this very quickly, it looks as if you are drawing.
