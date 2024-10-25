@@ -9,13 +9,16 @@ var is_pressed = false //this will store wether or not the mouse is pressed
 let mouse_pos; //this will temporarily store the moust position
 let art = [] //stores all the mouse positions in your current stroke
 let ctrl = false //is ctrl pressed
-let line_width = 2 //pen size
+let line_width = 3 //pen size
 let keys = null //key currently pressed
 let prev_key=null //last key pressed
 let bg_col='white' //background color
 let pen_col='black' //pen color
+let cur_tool='pen' //tool currently being
 
 localStorage.setItem("time",0) //sets time to 0
+
+
 
 //get mouse position
 window.addEventListener("mousemove",function get_mouse_pos(ev) { 
@@ -39,6 +42,7 @@ window.addEventListener("mouseup", function get_mouse_up(ev) {
 window.addEventListener("keydown",function get_keys(ev) {
     keys=ev.key
     ctrl=ev.ctrlKey
+    console.log(keys)
 
     //prevent website from saving index.html when clicking ctrl+s
     if (ev.ctrlKey && ev.key === 's') {
@@ -77,6 +81,16 @@ function get_pen_col() { //get the color in the color box
     return col;
 }
 
+function delete_canvas() {
+    ctx.fillStyle=bg_col
+    ctx.fillRect(0,0,canvas.width, canvas.height);
+}
+
+function get_tool() {
+    const tool=document.getElementById("tools").valuel
+    console.log(tool)
+}
+
 function draw_line(pos1,pos2) {
     /*pos1 is the first pos. it starts the line at pos1, and ends it at pos2*/
     ctx.beginPath();
@@ -84,6 +98,18 @@ function draw_line(pos1,pos2) {
     ctx.lineTo(pos2[0],pos2[1]);
     ctx.stroke();
 }
+
+function change_pen_size() {
+    if (keys=='[') {
+        line_width-=1
+        
+    }
+    if (keys==']') {
+        line_width+=1
+    }
+}
+
+delete_canvas()
 
 //main loop
 function loop() {
@@ -101,6 +127,11 @@ function loop() {
     }
 
     pen_col=get_pen_col() //change pen color
+
+    //erase canvas
+    if (keys=='Delete') {
+        delete_canvas()
+    }
 
     //draw if the mouse is down
     if (is_pressed==true) {
