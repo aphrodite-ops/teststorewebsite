@@ -113,6 +113,7 @@ delete_canvas()
 
 //main loop
 function loop() {
+    console.log("balls")
     //stringify variables before adding them to local storage
     let super_list_serialized=JSON.stringify(super_list);
     let is_pressed_serialized=JSON.stringify(is_pressed);
