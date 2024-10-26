@@ -1,16 +1,14 @@
+//imports
+import { draw_with_pen } from "./pen";
+
 //define variables
 const canvas = document.getElementById("canv") //canvas
 const ctx = canvas.getContext("2d");
 const ERASE_KEY='x' //keybind to erase
 
 var super_list = []; //this will store the mouse position
-var is_pressed = false //this will store wether or not the mouse is pressed
-
-let mouse_pos; //this will temporarily store the moust position
 let art = [] //stores all the mouse positions in your current stroke
-let ctrl = false //is ctrl pressed
 let line_width = 3 //pen size
-let keys = null //key currently pressed
 let prev_key=null //last key pressed
 let bg_col='white' //background color
 let pen_col='black' //pen color
@@ -87,17 +85,10 @@ function delete_canvas() {
 }
 
 function get_tool() {
-    const tool=document.getElementById("tools").valuel
-    console.log(tool)
+    const tool=document.getElementById("tools").value
+    return tool
 }
 
-function draw_line(pos1,pos2) {
-    /*pos1 is the first pos. it starts the line at pos1, and ends it at pos2*/
-    ctx.beginPath();
-    ctx.moveTo(pos1[0],pos1[1]);
-    ctx.lineTo(pos2[0],pos2[1]);
-    ctx.stroke();
-}
 
 function change_pen_size() {
     if (keys=='[') {
@@ -113,7 +104,6 @@ delete_canvas()
 
 //main loop
 function loop() {
-    console.log("balls")
     //stringify variables before adding them to local storage
     let super_list_serialized=JSON.stringify(super_list);
     let is_pressed_serialized=JSON.stringify(is_pressed);
@@ -128,6 +118,7 @@ function loop() {
     }
 
     pen_col=get_pen_col() //change pen color
+    cur_tool=get_tool()
 
     //erase canvas
     if (keys=='Delete') {
@@ -135,40 +126,34 @@ function loop() {
     }
 
     //draw if the mouse is down
-    if (is_pressed==true) {
+    if (cur_tool=="pen") {
+        if (is_pressed==true) {
 
-        art.push(mouse_pos); //add mouse pos to art
+            art.push(mouse_pos); //add mouse pos to art
 
-        //once you have moved your mose, it begins to draw
-        if (art.length>=2) {
+            //once you have moved your mose, it begins to draw
+            if (art.length>=2) {
 
-            //set up constents related to the pen and eraser
-            //constants when using eraser
-            if (keys==ERASE_KEY) {
-                ctx.lineWidth=20;
-                ctx.strokeStyle=bg_col;
+                //set up constents related to the pen and eraser
+                //constants when using eraser
+                if (keys==ERASE_KEY) {
+                    ctx.lineWidth=20;
+                    ctx.strokeStyle=bg_col;
+                }
+                //constants when using pen
+                else {
+                    ctx.lineWidth=line_width;
+                    ctx.strokeStyle=pen_col;
+                }
+
+                draw_with_pen(ctx);
+
             }
-            //constants when using pen
-            else {
-                ctx.lineWidth=line_width;
-                ctx.strokeStyle=pen_col;
-            }
-            
-            /*second_newest_mouse_pos was an earlier positon of the mouse, while
-            newest_mouse_pos is the current position of the mouse. the way it draws 
-            is by drawing small lines connecting second_newest_mouse_pos to
-            newest_mouse_pos*/
-            let second_newest_mouse_pos=art[art.length-2]; //start point of the line
-            let newest_mouse_pos=art[art.length-1]; //end point of the line
-
-
-            //draw a line
-            draw_line(second_newest_mouse_pos,newest_mouse_pos)
         }
-    }
-    //empty's art once you let go of your mouse button
-    else {
-        art=[];
+        //empty's art once you let go of your mouse button
+        else {
+            art=[];
+        }
     }
 
     prev_key=keys
