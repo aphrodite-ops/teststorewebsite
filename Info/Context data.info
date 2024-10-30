@@ -1,0 +1,11 @@
+The variable ctx_cop stores the current image on screen in abstract terms. It can be loaded on to the canvas with the function gen_canv().
+ctx_cop is a list. currently, each item in the list is also a list and has 4 elements in it. The first one states what type of object it is. so if
+if it is describing part of a pen stroke, the first item will be 'pen'.
+The second item depends on the type of object it is;
+    For pen strokes, it will be the your current mouse position and your previouse mouse position at the time of making the stroke(if you want to
+learn why this is, look in 'How It Draws.txt').
+    For rectangles, it will the anchored corner of the rectangle, as well as it's width and heigth(all these variables are stored in a local list
+called mouse_poss).
+    For lines, it will be the starting point of the line and ending point of the line(These are also stored in a local list called mouse_poss).
+The third element is the line width of that object.
+The forth and final element is the color of the object.
