@@ -2,7 +2,7 @@
 import { draw_line, pen } from "./pen.js";
 import { ctrl, alt, shift, meta, keys, is_pressed, mouse_pos} from "./inputs.js";
 import { get_pen_col, get_tool } from "./getElementVals.js"
-import rectangle from "./rectangle.js"
+import { rectangle, hi } from "./rectangle.js"
 import line from "./line.js"
 
 //define variables
@@ -164,6 +164,7 @@ function loop() {
     }
 
     //set previous keys
+    hi()
     prev_key=keys;
     prev_is_pressed=is_pressed;
     prev_mouse_pos=mouse_pos;
