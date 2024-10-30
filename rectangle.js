@@ -13,4 +13,4 @@ function hi() {
     console.log("hi")
 }
 
-export default rectangle;
+export { rectangle, hi };
