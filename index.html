@@ -6,12 +6,28 @@
     <body>
         <canvas width=1895 height=900 id="canv"></canvas> <!--canvas you draw on-->
         <link rel="stylesheet" href="styles.css"> <!--links the layout of the website with some styling for the website-->
-        <script src="app.js"></script> <!--links the layout of the website with its code-->
+
+        <!--links all the modules to index.html-->
+        <script src="pen.js" type="module"></script>
+        <script src="inputs.js" type="module"></script>
+        <script src="getElementVals.js" type="module"></script>
+        <script src="rectangle.js" type="module"></script>
+        <script src="line.js" type="module"></script>
+        
+        <script src="app.js" type="module"></script> <!--links the layout of the website with its code-->
 
         <!--Hex value inputs for pen-->
         <!--color input-->
-        <label for="username">Pen Color:</label>
+        <label for="pen_color">Pen Color:</label>
         <input type="color" id="pen_color" name="color_box">
+
+        <!--tool select-->
+        <label for="tools">Choose a tool: </label>
+        <select id="tools">
+            <option value="pen">Pen</option>
+            <option value="rectangle">Rectangle</option>
+            <option value="line">Line</option>
+        </select>
         <br><br>
     </body>
 </html>
