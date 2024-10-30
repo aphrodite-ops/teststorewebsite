@@ -9,4 +9,8 @@ function rectangle(mouse_poss,ctx) {
     return ['rect',mouse_poss,ctx.lineWidth,ctx.strokeStyle];
 }
 
+function hi() {
+    console.log("hi")
+}
+
 export default rectangle;
