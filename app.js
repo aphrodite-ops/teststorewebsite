@@ -1,57 +1,29 @@
 //imports
-import { draw_with_pen } from "./pen";
+import { draw_line, pen } from "./pen.js";
+import { ctrl, alt, shift, meta, keys, is_pressed, mouse_pos} from "./inputs.js";
+import { get_pen_col, get_tool } from "./getElementVals.js"
+import rectangle from "./rectangle.js"
+import line from "./line.js"
 
 //define variables
+//constants
 const canvas = document.getElementById("canv") //canvas
-const ctx = canvas.getContext("2d");
 const ERASE_KEY='x' //keybind to erase
 
-var super_list = []; //this will store the mouse position
-let art = [] //stores all the mouse positions in your current stroke
-let line_width = 3 //pen size
-let prev_key=null //last key pressed
-let bg_col='white' //background color
-let pen_col='black' //pen color
-let cur_tool='pen' //tool currently being
+//variable
+let line_width = 3; //pen size
+let prev_key; //last key pressed
+let prev_is_pressed; //previously pressed key
+let prev_mouse_pos; //previous mouse position
+let ctx_cop=[]; //stores data on context(explanation in info)
+let bg_col='white'; //current background color
+let pen_col='black'; //current pen color
+let cur_tool='pen'; //tool currently being
+let mouse_poss=[null,null]; //mouse postions for rectangle tool
+let mouse_poss_line=[null,null]; //mouse positions for line tool
+let ctx = canvas.getContext("2d"); //2d context of canvas
 
-localStorage.setItem("time",0) //sets time to 0
-
-
-
-//get mouse position
-window.addEventListener("mousemove",function get_mouse_pos(ev) { 
-    mouse_pos=[ev.x+this.scrollX,ev.y+this.scrollY]; //mouse position. the this.scrollX/this.scrollY is to so you can scroll through the page and stil have the pen draw at the right location
-    super_list=mouse_pos;
-})
-
-//mouse down->is_pressed=true
-//mouse up->is_pressed=false
-
-//set is_pressed to true when the mouse is down
-window.addEventListener("mousedown", function get_mouse_click(ev) {
-    is_pressed=true;
-})
-//set is_pressed to false when the mouse is up
-window.addEventListener("mouseup", function get_mouse_up(ev) {
-    is_pressed=false;
-})
-
-//get key pressed
-window.addEventListener("keydown",function get_keys(ev) {
-    keys=ev.key
-    ctrl=ev.ctrlKey
-    console.log(keys)
-
-    //prevent website from saving index.html when clicking ctrl+s
-    if (ev.ctrlKey && ev.key === 's') {
-        ev.preventDefault();
-    }
-})
-window.addEventListener("keyup", function undo_keys(ev) {
-    if (ev.key==keys) {
-        keys=null
-    }
-})
+localStorage.setItem("time",0); //time spent on website. //this isn't really being used but i may aswell keep it here¯\_(ツ)_/¯
 
 //function to save canvas as a png
 function save_canvas() {
@@ -63,54 +35,55 @@ function save_canvas() {
     }
 }
 
-//function to convert hexidecimal to rgb
-function hex_to_rgb(hex_code) { 
-    hex_code=hex_code.replace(/^#/,'');
-
-    let r=parseInt(hex_code.substring(0,2),16)
-    let g=parseInt(hex_code.substring(2,4),16)
-    let b=parseInt(hex_code.substring(4,6),16)
-    return [r,g,b];
-}
-
-//get the color in the color box
-function get_pen_col() { //get the color in the color box
-    const col=document.getElementById("pen_color").value
-    return col;
-}
-
-function delete_canvas() {
-    ctx.fillStyle=bg_col
-    ctx.fillRect(0,0,canvas.width, canvas.height);
-}
-
-function get_tool() {
-    const tool=document.getElementById("tools").value
-    return tool
-}
-
-
-function change_pen_size() {
-    if (keys=='[') {
-        line_width-=1
-        
+//fills screen with background color
+function delete_canvas(type) {
+    /*Normal mode simply fills the screen with the current background color
+    Force mode on the other hand. deletes the context data(ctx_cop). which means you can't regenerate the context*/
+    if (type=='normal') {
+        ctx.fillStyle=bg_col;
+        ctx.fillRect(0,0,canvas.width, canvas.height); //fill canvas with white
     }
-    if (keys==']') {
-        line_width+=1
+    if (type=='force') {
+        ctx_cop=['']; //deletes ctx_cop(context data)
+        /**if you're wandering why it sets ctx_cop=[''] instead of just ctx_cop=[]. the padding the empty string is just padding for other code*/
+        ctx.fillStyle=bg_col;
+        ctx.fillRect(0,0,canvas.width, canvas.height); //fill canvas with white
     }
 }
 
-delete_canvas()
+//generates an object from the context data
+function gen_obj(obj) {
+    ctx.lineWidth=obj[2];
+    ctx.strokeStyle=obj[3]
+    //part of a pen stroke
+    if (obj[0]==='pen') {
+        pen(obj[1],ctx);
+    }
+    //a rectangle
+    if (obj[0]==='rect') {
+        rectangle(obj[1],ctx);
+    }
+    //a line
+    if (obj[0]==='line') {
+        line(obj[1],ctx)
+    }
+}
+
+//regenerate the entire screen from the context data(ctx_cop)
+function gen_canvas(canv) {
+    let obj;
+    for (let i=0; i<canv.length; i++) {
+        obj=canv[i];
+        gen_obj(obj)
+        console.log(i)
+    }
+}
+
+//fill screen with white when starting
+delete_canvas('normal')
 
 //main loop
 function loop() {
-    //stringify variables before adding them to local storage
-    let super_list_serialized=JSON.stringify(super_list);
-    let is_pressed_serialized=JSON.stringify(is_pressed);
-    
-    //add variables to local storage
-    localStorage.setItem("isPressed",is_pressed_serialized);
-    localStorage.setItem("superList",super_list_serialized);
 
     //save image you have drawn
     if (keys=='s' && ctrl && (prev_key!='s')) {
@@ -118,46 +91,87 @@ function loop() {
     }
 
     pen_col=get_pen_col() //change pen color
-    cur_tool=get_tool()
+    cur_tool=get_tool() //change current tool
 
     //erase canvas
     if (keys=='Delete') {
-        delete_canvas()
+        delete_canvas('force')
     }
 
+    //set up constents related to the pen and eraser
+    //constants when using eraser
+    if (keys==ERASE_KEY) {
+        ctx.lineWidth=100;
+        ctx.strokeStyle=bg_col;
+    }
+    //constants when using pen
+    else {
+        ctx.lineWidth=line_width;
+        ctx.strokeStyle=pen_col;
+    }
+
+
+    //Draw with various tools
     //draw if the mouse is down
     if (cur_tool=="pen") {
         if (is_pressed==true) {
 
-            art.push(mouse_pos); //add mouse pos to art
-
             //once you have moved your mose, it begins to draw
-            if (art.length>=2) {
+            ctx_cop.push(pen([prev_mouse_pos,mouse_pos],ctx));
+        }
+    }
+    //draw with rectangle tool
+    if (cur_tool=="rectangle") {
+        if (is_pressed) {
 
-                //set up constents related to the pen and eraser
-                //constants when using eraser
-                if (keys==ERASE_KEY) {
-                    ctx.lineWidth=20;
-                    ctx.strokeStyle=bg_col;
+            if (!prev_is_pressed) {
+                mouse_poss[0]=mouse_pos;
+            }
+
+            //art.push([mouse_poss[0][0],mouse_poss[0][1],mouse_poss[1][0],mouse_poss[1][1]])
+
+            if (mouse_pos!=prev_mouse_pos) {
+                if (ctx_cop[ctx_cop.length-1][0]==='rect') {
+                    ctx_cop.pop()
                 }
-                //constants when using pen
-                else {
-                    ctx.lineWidth=line_width;
-                    ctx.strokeStyle=pen_col;
-                }
-
-                draw_with_pen(ctx);
-
+                ctx_cop.push(rectangle([mouse_poss[0],mouse_pos],ctx));
             }
         }
-        //empty's art once you let go of your mouse button
-        else {
-            art=[];
+        if (!is_pressed && prev_is_pressed) {
+            ctx_cop.pop();
+            ctx_cop.push(rectangle([mouse_poss[0],mouse_pos],ctx));
+            ctx_cop.push(['','']);
+        }
+    }
+    //draw line tool
+    if (cur_tool=="line") {
+        if (is_pressed) {
+
+            if (!prev_is_pressed) {
+                mouse_poss_line[0]=mouse_pos;
+            }
+
+            if (mouse_pos!=prev_mouse_pos) {
+                ctx_cop.pop()
+                ctx_cop.push(line([mouse_poss_line[0],mouse_pos],ctx));
+            }
+        }
+        if (!is_pressed && prev_is_pressed) {
+            ctx_cop.pop();
+            ctx_cop.push(line([mouse_poss_line[0],mouse_pos],ctx));
+            ctx_cop.push('')
         }
     }
 
-    prev_key=keys
+    //set previous keys
+    prev_key=keys;
+    prev_is_pressed=is_pressed;
+    prev_mouse_pos=mouse_pos;
+    delete_canvas('normal');
+    gen_canvas(ctx_cop);
 
-    requestAnimationFrame(loop);
+
+    requestAnimationFrame(loop); //run loop
 };
+
 requestAnimationFrame(loop); //run loop
