@@ -1,18 +1,22 @@
 /*This file gets all user inputs from mouse and keyboard(and in the future
     possibly other things such as a webcam or phonescreen)*/
 
+const canvas = document.getElementById("canv") //canvas
 let ctrl; //is ctrl pressed
 let alt;
 let shift;
 let meta;
 let keys; //key currently pressed
+let down_key;
 let is_pressed; //this will store wether or not the mouse is pressed
 let mouse_pos; //this will temporarily store the moust position
+let abs_mouse_pos;
 
 
 //get mouse position
 window.addEventListener("mousemove",function get_mouse_pos(ev) { 
-    mouse_pos=[ev.clientX+this.scrollX,ev.clientY+this.scrollY]; //mouse position. the this.scrollX/this.scrollY is to so you can scroll through the page and stil have the pen draw at the right location
+    abs_mouse_pos=[ev.clientX,ev.clientY];
+    mouse_pos=[ev.clientX+this.scrollX-canvas.offsetLeft,ev.clientY+this.scrollY-canvas.offsetTop]; //mouse position. the this.scrollX/this.scrollY is to so you can scroll through the page and stil have the pen draw at the right location
 })
 
 //mouse down->is_pressed=true
@@ -46,4 +50,9 @@ window.addEventListener("keyup", function undo_keys(ev) {
     }
 })
 
-export { ctrl, alt, shift, meta, keys, is_pressed, mouse_pos };
+window.addEventListener("keydown", (ev) => {
+    down_key=ev.key;
+
+})
+
+export { ctrl, alt, shift, meta, keys, is_pressed, mouse_pos, down_key, abs_mouse_pos};
