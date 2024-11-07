@@ -2,29 +2,70 @@
 <html>
     <head>
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="styles.css"> <!--links the layout of the website with some styling for the website-->
     </head>
     <body>
-        <canvas width=1895 height=900 id="canv"></canvas> <!--canvas you draw on-->
-        <link rel="stylesheet" href="styles.css"> <!--links the layout of the website with some styling for the website-->
+
+        <!--links all the modules to index.html-->
         <script src="pen.js" type="module"></script>
         <script src="inputs.js" type="module"></script>
         <script src="getElementVals.js" type="module"></script>
         <script src="rectangle.js" type="module"></script>
         <script src="line.js" type="module"></script>
+        
         <script src="app.js" type="module"></script> <!--links the layout of the website with its code-->
 
-        <!--Hex value inputs for pen-->
-        <!--color input-->
-        <label for="pen_color">Pen Color:</label>
-        <input type="color" id="pen_color" name="color_box">
+        <section class="container">
+            <div id="toolbar">
+                <h1 id="heading">𝓭𝓻𝓪𝔀</h1>
+                <!--Hex value inputs for the color of strokes(ctx.strokeStyle)-->
+                <!--color input-->
+                <label for="pen_color">Stroke Color:</label>
+                <input type="color" id="pen_color" name="pen_">
+                
+                <label for="size">Line width:</label>
+                <input type="range" min="1" max="10" id="size" name="size">
+                
+                <!--tool select-->
+                <label for="tools">Choose a tool: </label>
+                <select id="tools" name="tools">
+                    <option value="pen">Pen</option>
+                    <option value="rectangle">Rectangle</option>
+                    <option value="line">Line</option>
+                    <option value="text">Text</option>
+                </select>
+            </div>
 
-        <!--tool select-->
-        <label for="tools">Choose a tool: </label>
-        <select id="tools">
-            <option value="pen">Pen</option>
-            <option value="rectangle">Rectangle</option>
-            <option value="line">Line</option>
-        </select>
-        <br><br>
+            <textarea id="textBox" hidden></textarea>
+
+
+            <div class="canv">
+                <canvas width=2000 height=1000 id="canv"></canvas> <!--canvas you draw on-->
+            </div>
+        </section>
+        <section class="container">
+            <div id="textOptions" hidden>
+
+                <!--font options-->
+                <!--font size-->
+                <label for="fontSize">Font-Size:</label>
+                <input name="fontSize" type="number" max="72" min="1" id="fontSize" value="12">
+
+                <!--font-->
+                <label for="fonts">Font:</label>
+                <select id="fonts" name="fonts">
+                    <option value="Arial">Arial</option>
+                    <option value="Verdana">Verdana</option>
+                    <option value="Tahoma">Tahoma</option>
+                    <option value="Trebuchet MS">Trebuchet</option>
+                    <option value="Times New Roman">Times New Roman</option>
+                    <option value="Georgia">Georgia</option>
+                    <option value="Garamond">Garamond</option>
+                    <option value="Courier New">Courier New</option>
+                    <option value="Brush Script MT">Brush Script</option>
+                </select>
+            </div>
+        </section>
     </body>
 </html>
