@@ -194,6 +194,9 @@ function loop() {
             }
         }
         if (!is_pressed && prev_is_pressed) {
+            if (!mouse_pos_start_rect) {
+                mouse_pos_start_rect=mouse_pos;
+            }
             ctx_cop.pop();
             ctx_cop.push(rectangle([mouse_pos_start_rect,mouse_pos],ctx));
             ctx_cop.push(['','']);
@@ -213,6 +216,9 @@ function loop() {
             }
         }
         if (!is_pressed && prev_is_pressed) {
+            if (!mouse_pos_start_line) {
+                mouse_pos_start_line=mouse_pos;
+            }
             ctx_cop.pop();
             ctx_cop.push(line([mouse_pos_start_line,mouse_pos],ctx));
             ctx_cop.push('')
